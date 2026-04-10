@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCSE Simultaneous Equations - Edexcel Foundation</title>
+    <title>GCSE Simultaneous Equations Tool</title>
     <style>
         body {
             margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column;
@@ -29,9 +29,10 @@
         .problem-section { padding: 40px; border-right: 3px solid #eee; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #ffffff; }
         .help-section { padding: 40px; background-color: #f4f4f2; display: flex; flex-direction: column; }
 
-        .equation-box { font-size: 4.5rem; font-weight: 900; margin: 10px 0; color: #111; }
+        .equation-box { font-size: 4.5rem; font-weight: 900; margin: 10px 0; color: #111; min-height: 1.2em; }
         
         .level-select button { padding: 15px 25px; font-size: 1.2rem; margin: 5px; cursor: pointer; border: none; border-radius: 10px; background: #1b5e20; color: white; font-weight: bold; }
+        .level-select button:hover { background: #27ae60; }
 
         input { width: 110px; padding: 10px; font-size: 2rem; border: 5px solid #d4af37; border-radius: 12px; text-align: center; font-weight: bold; }
         
@@ -41,7 +42,7 @@
         #hint-display, #answer-display { margin-top: 15px; display: none; }
         .reveal-btn { background: #444; color: white; border: none; padding: 12px; margin-top: 10px; cursor: pointer; border-radius: 8px; font-weight: bold; }
         
-        #feedback { font-size: 2.5rem; margin-top: 20px; font-weight: 900; }
+        #feedback { font-size: 2.5rem; margin-top: 20px; font-weight: 900; height: 50px; }
     </style>
 </head>
 <body>
@@ -61,8 +62,8 @@
                 <button onclick="generateProblem(2)">LEVEL 2</button>
                 <button onclick="generateProblem(3)">LEVEL 3</button>
             </div>
-            <div id="eq1" class="equation-box">---</div>
-            <div id="eq2" class="equation-box">---</div>
+            <div id="eq1" class="equation-box">Click a Level</div>
+            <div id="eq2" class="equation-box">To Start</div>
             <div style="margin-top: 20px; font-size: 2rem;">
                 x = <input type="number" id="ansX" step="any">
                 y = <input type="number" id="ansY" step="any">
@@ -73,8 +74,8 @@
 
         <div class="help-section">
             <h2 style="color: #1b5e20; border-bottom: 3px solid #d4af37;">How to Solve</h2>
-            <div class="instruction-step"><b>Level 1:</b> Match found? Subtract them.</div>
-            <div class="instruction-step"><b>Level 2:</b> Plus and Minus? Add them.</div>
+            <div class="instruction-step"><b>Level 1:</b> Match found? Subtract equations.</div>
+            <div class="instruction-step"><b>Level 2:</b> Plus and Minus? Add equations.</div>
             <div class="instruction-step"><b>Level 3:</b> Multiply one line to get a match.</div>
 
             <button class="reveal-btn" onclick="toggleHint()">Show Hint</button>
@@ -86,11 +87,132 @@
     </div>
 
 <script>
-    let currentX, currentY, a, b, d, e, c, f;
+    // Global variables for tracking the state
+    let currentX = 0, currentY = 0;
     let timeLeft = 120;
     let timerId = null;
 
+    // --- TIMER FUNCTIONS ---
     function updateTimerDisplay() {
         let mins = Math.floor(timeLeft / 60);
         let secs = timeLeft % 60;
-        document.getElementById('timer
+        document.getElementById('timer-display').innerText = 
+            mins.toString().padStart(2, '0') + ":" + secs.toString().padStart(2, '0');
+    }
+
+    function toggleTimer() {
+        const btn = document.getElementById('start-pause-btn');
+        if (timerId) { 
+            clearInterval(timerId); 
+            timerId = null; 
+            btn.innerText = "START"; 
+            btn.style.background = "#27ae60"; 
+        } else { 
+            btn.innerText = "PAUSE"; 
+            btn.style.background = "#f39c12"; 
+            timerId = setInterval(() => { 
+                if (timeLeft > 0) { 
+                    timeLeft--; 
+                    updateTimerDisplay(); 
+                } 
+            }, 1000); 
+        }
+    }
+
+    function adjustTimer(amount) { 
+        timeLeft = Math.max(0, timeLeft + amount); 
+        updateTimerDisplay(); 
+    }
+
+    function resetTimer() { 
+        clearInterval(timerId); 
+        timerId = null; 
+        timeLeft = 120; 
+        document.getElementById('start-pause-btn').innerText = "START";
+        document.getElementById('start-pause-btn').style.background = "#27ae60";
+        updateTimerDisplay(); 
+    }
+
+    // --- MATH PROBLEM GENERATION ---
+    function generateProblem(level) {
+        // Clear previous state
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('hint-display').style.display = "none";
+        document.getElementById('answer-display').style.display = "none";
+        document.getElementById('ansX').value = "";
+        document.getElementById('ansY').value = "";
+        
+        // Random whole numbers for X and Y
+        currentX = Math.floor(Math.random() * 6) + 2;
+        currentY = Math.floor(Math.random() * 6) + 2;
+
+        let a, b, d, e, c, f;
+        let hintText = "";
+        let op2 = " + ";
+
+        if (level === 1) {
+            // Level 1: Same X values
+            a = Math.floor(Math.random() * 3) + 2;
+            d = a; 
+            b = Math.floor(Math.random() * 2) + 2;
+            e = Math.floor(Math.random() * 3) + 5;
+            hintText = "HINT: Both equations have " + a + "x. Subtract them to eliminate x!";
+            c = (a * currentX) + (b * currentY);
+            f = (d * currentX) + (e * currentY);
+        } else if (level === 2) {
+            // Level 2: +Y and -Y
+            a = Math.floor(Math.random() * 3) + 2;
+            d = Math.floor(Math.random() * 3) + 5;
+            b = Math.floor(Math.random() * 4) + 2;
+            e = b; 
+            op2 = " - "; 
+            hintText = "HINT: One has +" + b + "y and one has -" + b + "y. ADD them to eliminate y!";
+            c = (a * currentX) + (b * currentY);
+            f = (d * currentX) - (e * currentY);
+        } else {
+            // Level 3: Multiply one equation by 2
+            a = Math.floor(Math.random() * 2) + 2;
+            b = Math.floor(Math.random() * 2) + 2;
+            d = a * 2; 
+            e = Math.floor(Math.random() * 3) + 5;
+            hintText = "HINT: " + d + "x is double " + a + "x. Multiply the first equation by 2 to match!";
+            c = (a * currentX) + (b * currentY);
+            f = (d * currentX) + (e * currentY);
+        }
+
+        // Display results
+        document.getElementById('eq1').innerText = a + "x + " + b + "y = " + c;
+        document.getElementById('eq2').innerText = d + "x" + op2 + e + "y = " + f;
+        document.getElementById('hint-display').innerText = hintText;
+        document.getElementById('answer-display').innerText = "Solution: x = " + currentX + ", y = " + currentY;
+    }
+
+    function checkAnswer() {
+        const uX = parseFloat(document.getElementById('ansX').value);
+        const uY = parseFloat(document.getElementById('ansY').value);
+        const fb = document.getElementById('feedback');
+        
+        if (uX === currentX && uY === currentY) { 
+            fb.innerText = "✅ CORRECT!"; 
+            fb.style.color = "green"; 
+        } else { 
+            fb.innerText = "❌ TRY AGAIN"; 
+            fb.style.color = "red"; 
+        }
+    }
+
+    // Toggle Visibility
+    function toggleHint() { 
+        let h = document.getElementById('hint-display'); 
+        h.style.display = h.style.display === "block" ? "none" : "block"; 
+    }
+    function toggleAnswer() { 
+        let ad = document.getElementById('answer-display'); 
+        ad.style.display = ad.style.display === "block" ? "none" : "block"; 
+    }
+
+    // Initialize display
+    updateTimerDisplay();
+</script>
+</body>
+</html>
