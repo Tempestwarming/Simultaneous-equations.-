@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GCSE Simultaneous Equations Tool</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; width: 100%; }
+        h1 { color: #2c3e50; font-size: 1.5rem; }
+        .equation { font-size: 1.2rem; font-weight: bold; margin: 10px 0; color: #34495e; }
+        .input-group { margin-top: 20px; }
+        input { width: 60px; padding: 8px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        #feedback { margin-top: 15px; font-weight: bold; }
+        .level-btns { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Simultaneous Equation Solver</h1>
+    
+    <div class="level-btns">
+        <button onclick="generateProblem(1)">Level 1</button>
+        <button onclick="generateProblem(2)">Level 2</button>
+        <button onclick="generateProblem(3)">Level 3</button>
+    </div>
+
+    <div class="card">
+        <div id="equation1" class="equation">Click a level to start</div>
+        <div id="equation2" class="equation"></div>
+
+        <div class="input-group">
+            x = <input type="number" id="ansX" step="any">
+            y = <input type="number" id="ansY" step="any">
+            <br><br>
+            <button onclick="checkAnswer()">Check Answer</button>
+        </div>
+        <div id="feedback"></div>
+    </div>
+
+<script>
+    let currentX, currentY;
+
+    function generateProblem(level) {
+        // Clear previous
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('ansX').value = "";
+        document.getElementById('ansY').value = "";
+
+        // Generate hidden answers (integers for Foundation)
+        currentX = Math.floor(Math.random() * 10) + 1;
+        currentY = Math.floor(Math.random() * 10) + 1;
+
+        let a, b, d, e;
+
+        if (level === 1) {
+            // Level 1: Same coefficients for y
+            a = Math.floor(Math.random() * 5) + 1;
+            d = Math.floor(Math.random() * 5) + 1;
+            b = Math.floor(Math.random() * 5) + 1;
+            e = b; // Coefficient of y is the same
+        } else if (level === 2) {
+            // Level 2: One is a multiple of the other
+            b = Math.floor(Math.random() * 3) + 1;
+            e = b * 2; 
+            a = Math.floor(Math.random() * 5) + 1;
+            d = Math.floor(Math.random() * 5) + 1;
+        } else {
+            // Level 3: Different coefficients
+            a = Math.floor(Math.random() * 4) + 2;
+            b = Math.floor(Math.random() * 3) + 2;
+            d = Math.floor(Math.random() * 4) + 2;
+            e = Math.floor(Math.random() * 3) + 4;
+        }
+
+        // Calculate constants c and f
+        // ax + by = c
+        // dx + ey = f
+        let c = (a * currentX) + (b * currentY);
+        let f = (d * currentX) + (e * currentY);
+
+        document.getElementById('equation1').innerText = `${a}x + ${b}y = ${c}`;
+        document.getElementById('equation2').innerText = `${d}x + ${e}y = ${f}`;
+    }
+
+    function checkAnswer() {
+        const userX = parseFloat(document.getElementById('ansX').value);
+        const userY = parseFloat(document.getElementById('ansY').value);
+        const feedback = document.getElementById('feedback');
+
+        if (userX === currentX && userY === currentY) {
+            feedback.innerText = "Correct! Well done.";
+            feedback.style.color = "green";
+        } else {
+            feedback.innerText = "Try again!";
+            feedback.style.color = "red";
+        }
+    }
+</script>
+</body>
+</html>
