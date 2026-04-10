@@ -3,112 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCSE Simultaneous Equations Pro</title>
+    <title>GCSE Simultaneous Equations Pro + Timer</title>
     <style>
-        /* Gold and Green Gradient Background */
         body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             background: linear-gradient(135deg, #d4af37 0%, #1b5e20 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif; overflow: hidden;
         }
 
-        /* The Main Classroom Board (Off-White) */
+        /* Top Bar for Timer */
+        .timer-bar {
+            background: rgba(0, 0, 0, 0.8); color: white; padding: 10px 30px;
+            border-radius: 50px; margin-bottom: 20px; display: flex; align-items: center;
+            gap: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        #timer-display { font-size: 2.5rem; font-weight: bold; font-family: monospace; min-width: 120px; text-align: center; }
+        .timer-btn { background: #d4af37; border: none; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-size: 1.2rem; }
+        .timer-btn:hover { background: #fff; color: #000; }
+
         .container {
-            width: 90vw;
-            height: 85vh;
-            background-color: #fcfcfc;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            overflow: hidden;
+            width: 95vw; height: 80vh; background-color: #fcfcfc;
+            border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: grid; grid-template-columns: 1.2fr 0.8fr; overflow: hidden;
         }
 
-        /* Left Side: The Problem Area */
-        .problem-section {
-            padding: 40px;
-            border-right: 2px solid #eee;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+        .problem-section { padding: 40px; border-right: 2px solid #eee; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .help-section { padding: 40px; background-color: #f9f9f9; display: flex; flex-direction: column; }
 
-        /* Right Side: The Help Area */
-        .help-section {
-            padding: 40px;
-            background-color: #f9f9f9;
-            display: flex;
-            flex-direction: column;
-        }
-
-        h1 { color: #1b5e20; font-size: 2.5rem; margin-top: 0; }
-        .equation-box { font-size: 3.5rem; font-weight: bold; margin: 20px 0; color: #333; letter-spacing: 2px; }
+        h1 { color: #1b5e20; font-size: 2rem; margin: 0; }
+        .equation-box { font-size: 4rem; font-weight: bold; margin: 10px 0; color: #222; }
         
-        .level-select { margin-bottom: 30px; }
-        .level-select button {
-            padding: 10px 20px; font-size: 1.1rem; margin: 5px; cursor: pointer;
-            border: none; border-radius: 5px; background: #d4af37; color: white; transition: 0.3s;
-        }
-        .level-select button:hover { background: #b8860b; }
+        .level-select button { padding: 10px 15px; font-size: 1rem; margin: 5px; cursor: pointer; border: none; border-radius: 5px; background: #1b5e20; color: white; }
 
-        input { width: 100px; padding: 15px; font-size: 1.5rem; border: 2px solid #ddd; border-radius: 8px; }
+        input { width: 90px; padding: 15px; font-size: 1.8rem; border: 3px solid #ddd; border-radius: 8px; text-align: center; }
         
-        .action-btn {
-            padding: 15px 30px; font-size: 1.3rem; background: #1b5e20; color: white;
-            border: none; border-radius: 8px; cursor: pointer; margin-top: 20px;
-        }
+        .action-btn { padding: 15px 40px; font-size: 1.5rem; background: #d4af37; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold; }
 
-        /* Help Text Styling */
-        .instruction-step {
-            background: white; border-left: 5px solid #d4af37;
-            padding: 15px; margin: 10px 0; font-size: 1.2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        #hint-display, #answer-display {
-            margin-top: 20px; display: none;
-        }
-
+        .instruction-step { background: white; border-left: 5px solid #d4af37; padding: 15px; margin: 10px 0; font-size: 1.2rem; }
+        #hint-display, #answer-display { margin-top: 15px; display: none; }
         .reveal-btn { background: #555; color: white; border: none; padding: 10px; margin-top: 10px; cursor: pointer; border-radius: 4px; }
+        
+        /* Time's up alert */
+        .times-up { color: #ff0000 !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
+    <div class="timer-bar">
+        <button class="timer-btn" onclick="adjustTimer(-30)">- 30s</button>
+        <div id="timer-display">02:00</div>
+        <button class="timer-btn" onclick="adjustTimer(30)">+ 30s</button>
+        <button class="timer-btn" id="start-pause-btn" onclick="toggleTimer()" style="background: #27ae60;">START</button>
+        <button class="timer-btn" onclick="resetTimer()" style="background: #c0392b;">RESET</button>
+    </div>
+
     <div class="container">
         <div class="problem-section">
             <div class="level-select">
-                <button onclick="generateProblem(1)">Level 1 (Basic)</button>
-                <button onclick="generateProblem(2)">Level 2 (Intermediate)</button>
-                <button onclick="generateProblem(3)">Level 3 (Complex)</button>
+                <button onclick="generateProblem(1)">Level 1</button>
+                <button onclick="generateProblem(2)">Level 2</button>
+                <button onclick="generateProblem(3)">Level 3</button>
             </div>
-
-            <h1>Solve:</h1>
+            <h1>Solve Simultaneously:</h1>
             <div id="eq1" class="equation-box">---</div>
             <div id="eq2" class="equation-box">---</div>
-
-            <div style="margin-top: 30px;">
+            <div style="margin-top: 20px;">
                 x = <input type="number" id="ansX" step="any">
                 y = <input type="number" id="ansY" step="any">
             </div>
             <button class="action-btn" onclick="checkAnswer()">Check Solution</button>
-            <div id="feedback" style="font-size: 1.5rem; margin-top: 20px;"></div>
+            <div id="feedback" style="font-size: 2rem; margin-top: 20px; font-weight: bold;"></div>
         </div>
 
         <div class="help-section">
-            <h2 style="color: #d4af37;">How to Solve</h2>
-            <div class="instruction-step">1. <b>Align:</b> Ensure $x$ and $y$ are on the same side.</div>
-            <div class="instruction-step">2. <b>Match:</b> Make the coefficients of $y$ (or $x$) the same.</div>
-            <div class="instruction-step">3. <b>Eliminate:</b> Add or subtract the equations.</div>
-            <div class="instruction-step">4. <b>Substitute:</b> Find the other variable.</div>
+            <h2 style="color: #d4af37; margin-top: 0;">Classroom Guide</h2>
+            <div class="instruction-step"><b>1. Match:</b> Make the number of $y$'s the same.</div>
+            <div class="instruction-step"><b>2. Eliminate:</b> If signs are <i>Same Subtract</i> (SS), if <i>Different Add</i>.</div>
+            <div class="instruction-step"><b>3. Solve:</b> Find $x$, then sub back to find $y$.</div>
 
-            <button class="reveal-btn" onclick="toggleHint()">Show/Hide Hint</button>
+            <button class="reveal-btn" onclick="toggleHint()">Toggle Hint</button>
             <div id="hint-display" class="instruction-step" style="border-color: #1b5e20;"></div>
 
             <button class="reveal-btn" onclick="toggleAnswer()">Reveal Answer</button>
@@ -118,27 +93,73 @@
 
 <script>
     let currentX, currentY, a, b, d, e, c, f;
+    let timeLeft = 120; // 2 minutes default
+    let timerId = null;
 
+    // --- TIMER LOGIC ---
+    function updateTimerDisplay() {
+        let mins = Math.floor(timeLeft / 60);
+        let secs = timeLeft % 60;
+        document.getElementById('timer-display').innerText = 
+            `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function toggleTimer() {
+        const btn = document.getElementById('start-pause-btn');
+        if (timerId) {
+            clearInterval(timerId);
+            timerId = null;
+            btn.innerText = "START";
+            btn.style.background = "#27ae60";
+        } else {
+            btn.innerText = "PAUSE";
+            btn.style.background = "#f39c12";
+            timerId = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerId);
+                    document.getElementById('timer-display').classList.add('times-up');
+                }
+            }, 1000);
+        }
+    }
+
+    function adjustTimer(amount) {
+        timeLeft = Math.max(0, timeLeft + amount);
+        updateTimerDisplay();
+    }
+
+    function resetTimer() {
+        clearInterval(timerId);
+        timerId = null;
+        timeLeft = 120;
+        document.getElementById('timer-display').classList.remove('times-up');
+        document.getElementById('start-pause-btn').innerText = "START";
+        document.getElementById('start-pause-btn').style.background = "#27ae60";
+        updateTimerDisplay();
+    }
+
+    // --- MATH LOGIC ---
     function generateProblem(level) {
-        // Reset UI
         document.getElementById('feedback').innerText = "";
         document.getElementById('hint-display').style.display = "none";
         document.getElementById('answer-display').style.display = "none";
         document.getElementById('ansX').value = "";
         document.getElementById('ansY').value = "";
 
-        // Logic: Pick answers first (Pearson Edexcel Foundation usually uses integers)
-        currentX = Math.floor(Math.random() * 9) + 1;
-        currentY = Math.floor(Math.random() * 9) + 1;
+        currentX = Math.floor(Math.random() * 8) + 1;
+        currentY = Math.floor(Math.random() * 8) + 1;
 
         if (level === 1) {
-            a = Math.floor(Math.random() * 4) + 1;
-            d = Math.floor(Math.random() * 4) + 1;
+            a = Math.floor(Math.random() * 3) + 1;
+            d = Math.floor(Math.random() * 3) + 4;
             b = Math.floor(Math.random() * 3) + 2;
-            e = b; // Level 1: Same y coefficients
+            e = b; 
         } else if (level === 2) {
             b = Math.floor(Math.random() * 2) + 2;
-            e = b * 2; // Level 2: One is a multiple
+            e = b * (Math.random() > 0.5 ? 2 : 3); 
             a = Math.floor(Math.random() * 4) + 1;
             d = Math.floor(Math.random() * 4) + 1;
         } else {
@@ -154,11 +175,9 @@
         document.getElementById('eq1').innerText = `${a}x + ${b}y = ${c}`;
         document.getElementById('eq2').innerText = `${d}x + ${e}y = ${f}`;
 
-        // Prepare Hint Text
-        let hintText = "";
-        if(level === 1) hintText = `Look at the $y$ terms. Both are ${b}y. Subtract the equations to eliminate $y$!`;
-        else if(level === 2) hintText = `Multiply the top equation by 2 so you have ${e}y in both.`;
-        else hintText = `Multiply Equation 1 by ${e} and Equation 2 by ${b} to match the $y$ terms.`;
+        let hintText = level === 1 ? `Both equations have ${b}y. Subtract them!` :
+                       level === 2 ? `Multiply the first equation so you get ${e}y.` :
+                       `Find a common multiple for y (try ${b*e}).`;
         
         document.getElementById('hint-display').innerHTML = "<b>Hint:</b> " + hintText;
         document.getElementById('answer-display').innerHTML = `<b>Solution:</b> x = ${currentX}, y = ${currentY}`;
@@ -167,29 +186,20 @@
     function checkAnswer() {
         const uX = parseFloat(document.getElementById('ansX').value);
         const uY = parseFloat(document.getElementById('ansY').value);
-        const fb = document.getElementById('feedback');
-
         if (uX === currentX && uY === currentY) {
-            fb.innerText = "✅ CORRECT!";
-            fb.style.color = "green";
+            document.getElementById('feedback').innerText = "✅ CORRECT!";
+            document.getElementById('feedback').style.color = "green";
         } else {
-            fb.innerText = "❌ Try again, check your signs!";
-            fb.style.color = "red";
+            document.getElementById('feedback').innerText = "❌ TRY AGAIN";
+            document.getElementById('feedback').style.color = "red";
         }
     }
 
-    function toggleHint() {
-        const h = document.getElementById('hint-display');
-        h.style.display = h.style.display === "block" ? "none" : "block";
-    }
+    function toggleHint() { h = document.getElementById('hint-display'); h.style.display = h.style.display === "block" ? "none" : "block"; }
+    function toggleAnswer() { aDisp = document.getElementById('answer-display'); aDisp.style.display = aDisp.style.display === "block" ? "none" : "block"; }
 
-    function toggleAnswer() {
-        const a = document.getElementById('answer-display');
-        a.style.display = a.style.display === "block" ? "none" : "block";
-    }
-
-    // Initialize with a problem
     generateProblem(1);
+    updateTimerDisplay();
 </script>
 </body>
 </html>
