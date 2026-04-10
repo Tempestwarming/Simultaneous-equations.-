@@ -3,51 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCSE Simultaneous Equations Pro</title>
+    <title>GCSE Simultaneous Equations - Edexcel Foundation</title>
     <style>
         body {
             margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             background: linear-gradient(135deg, #d4af37 0%, #1b5e20 100%);
-            font-family: Arial, sans-serif; overflow: hidden;
+            font-family: 'Arial Black', sans-serif; overflow: hidden;
         }
 
-        /* Timer Bar */
         .timer-bar {
-            background: rgba(0, 0, 0, 0.8); color: white; padding: 10px 30px;
+            background: rgba(0, 0, 0, 0.9); color: white; padding: 15px 40px;
             border-radius: 50px; margin-bottom: 20px; display: flex; align-items: center;
-            gap: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            gap: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
-        #timer-display { font-size: 2.5rem; font-weight: bold; font-family: monospace; min-width: 120px; text-align: center; }
-        .timer-btn { background: #d4af37; border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: bold; }
+        #timer-display { font-size: 3rem; font-weight: bold; font-family: monospace; min-width: 150px; text-align: center; color: #f1c40f; }
+        .timer-btn { background: #d4af37; border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; }
 
-        /* Main Container */
         .container {
-            width: 95vw; height: 82vh; background-color: #fcfcfc;
-            border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: grid; grid-template-columns: 1.2fr 0.8fr; overflow: hidden;
+            width: 96vw; height: 80vh; background-color: #fafaf8;
+            border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            display: grid; grid-template-columns: 1.3fr 0.7fr; overflow: hidden;
         }
 
-        .problem-section { padding: 40px; border-right: 2px solid #eee; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .help-section { padding: 40px; background-color: #f9f9f9; display: flex; flex-direction: column; }
+        .problem-section { padding: 40px; border-right: 3px solid #eee; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #ffffff; }
+        .help-section { padding: 40px; background-color: #f4f4f2; display: flex; flex-direction: column; }
 
-        h1 { color: #1b5e20; font-size: 2.2rem; margin: 0; }
         .equation-box { font-size: 4.5rem; font-weight: 900; margin: 10px 0; color: #111; }
         
-        .level-select button { padding: 12px 20px; font-size: 1.1rem; margin: 5px; cursor: pointer; border: none; border-radius: 5px; background: #1b5e20; color: white; font-weight: bold; }
+        .level-select button { padding: 15px 25px; font-size: 1.2rem; margin: 5px; cursor: pointer; border: none; border-radius: 10px; background: #1b5e20; color: white; font-weight: bold; }
 
-        input { width: 100px; padding: 15px; font-size: 2rem; border: 4px solid #d4af37; border-radius: 8px; text-align: center; font-weight: bold; }
+        input { width: 110px; padding: 10px; font-size: 2rem; border: 5px solid #d4af37; border-radius: 12px; text-align: center; font-weight: bold; }
         
-        .action-btn { padding: 20px 50px; font-size: 1.8rem; background: #1b5e20; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 25px; font-weight: bold; box-shadow: 0 4px 0 #0d3a14; }
-        .action-btn:active { transform: translateY(4px); box-shadow: none; }
+        .action-btn { padding: 20px; font-size: 1.8rem; background: #1b5e20; color: white; border: none; border-radius: 12px; cursor: pointer; margin-top: 20px; font-weight: bold; width: 80%; }
 
-        .instruction-step { background: white; border-left: 8px solid #d4af37; padding: 20px; margin: 12px 0; font-size: 1.4rem; color: #333; }
-        #hint-display, #answer-display { margin-top: 15px; display: none; font-weight: bold; }
-        .reveal-btn { background: #555; color: white; border: none; padding: 12px; margin-top: 10px; cursor: pointer; border-radius: 6px; font-size: 1rem; }
+        .instruction-step { background: white; border-left: 10px solid #d4af37; padding: 15px; margin: 10px 0; font-size: 1.3rem; color: #222; }
+        #hint-display, #answer-display { margin-top: 15px; display: none; }
+        .reveal-btn { background: #444; color: white; border: none; padding: 12px; margin-top: 10px; cursor: pointer; border-radius: 8px; font-weight: bold; }
         
         #feedback { font-size: 2.5rem; margin-top: 20px; font-weight: 900; }
-        .times-up { color: #ff0000 !important; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -56,7 +50,7 @@
         <button class="timer-btn" onclick="adjustTimer(-30)">- 30s</button>
         <div id="timer-display">02:00</div>
         <button class="timer-btn" onclick="adjustTimer(30)">+ 30s</button>
-        <button class="timer-btn" id="start-pause-btn" onclick="toggleTimer()" style="background: #27ae60; width: 100px;">START</button>
+        <button class="timer-btn" id="start-pause-btn" onclick="toggleTimer()" style="background: #27ae60;">START</button>
         <button class="timer-btn" onclick="resetTimer()" style="background: #c0392b;">RESET</button>
     </div>
 
@@ -67,10 +61,9 @@
                 <button onclick="generateProblem(2)">LEVEL 2</button>
                 <button onclick="generateProblem(3)">LEVEL 3</button>
             </div>
-            <h1>Solve:</h1>
             <div id="eq1" class="equation-box">---</div>
             <div id="eq2" class="equation-box">---</div>
-            <div style="margin-top: 20px; font-size: 2rem; font-weight: bold;">
+            <div style="margin-top: 20px; font-size: 2rem;">
                 x = <input type="number" id="ansX" step="any">
                 y = <input type="number" id="ansY" step="any">
             </div>
@@ -79,5 +72,25 @@
         </div>
 
         <div class="help-section">
-            <h2 style="color: #1b5e20; margin-top: 0; font-size: 2rem;">Classroom Steps</h2>
-            <div class="instruction-step"><b>1. Match:</b> Make the number of y terms the same.</div>
+            <h2 style="color: #1b5e20; border-bottom: 3px solid #d4af37;">How to Solve</h2>
+            <div class="instruction-step"><b>Level 1:</b> Match found? Subtract them.</div>
+            <div class="instruction-step"><b>Level 2:</b> Plus and Minus? Add them.</div>
+            <div class="instruction-step"><b>Level 3:</b> Multiply one line to get a match.</div>
+
+            <button class="reveal-btn" onclick="toggleHint()">Show Hint</button>
+            <div id="hint-display" class="instruction-step" style="border-color: #1b5e20; background: #e8f5e9;"></div>
+
+            <button class="reveal-btn" onclick="toggleAnswer()">Reveal Answer</button>
+            <div id="answer-display" class="instruction-step" style="background: #fff3cd;"></div>
+        </div>
+    </div>
+
+<script>
+    let currentX, currentY, a, b, d, e, c, f;
+    let timeLeft = 120;
+    let timerId = null;
+
+    function updateTimerDisplay() {
+        let mins = Math.floor(timeLeft / 60);
+        let secs = timeLeft % 60;
+        document.getElementById('timer
