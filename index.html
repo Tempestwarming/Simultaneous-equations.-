@@ -2,101 +2,194 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GCSE Simultaneous Equations Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE Simultaneous Equations Pro</title>
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; width: 100%; }
-        h1 { color: #2c3e50; font-size: 1.5rem; }
-        .equation { font-size: 1.2rem; font-weight: bold; margin: 10px 0; color: #34495e; }
-        .input-group { margin-top: 20px; }
-        input { width: 60px; padding: 8px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #2980b9; }
-        #feedback { margin-top: 15px; font-weight: bold; }
-        .level-btns { margin-bottom: 20px; }
+        /* Gold and Green Gradient Background */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #d4af37 0%, #1b5e20 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* The Main Classroom Board (Off-White) */
+        .container {
+            width: 90vw;
+            height: 85vh;
+            background-color: #fcfcfc;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+        }
+
+        /* Left Side: The Problem Area */
+        .problem-section {
+            padding: 40px;
+            border-right: 2px solid #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Right Side: The Help Area */
+        .help-section {
+            padding: 40px;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 { color: #1b5e20; font-size: 2.5rem; margin-top: 0; }
+        .equation-box { font-size: 3.5rem; font-weight: bold; margin: 20px 0; color: #333; letter-spacing: 2px; }
+        
+        .level-select { margin-bottom: 30px; }
+        .level-select button {
+            padding: 10px 20px; font-size: 1.1rem; margin: 5px; cursor: pointer;
+            border: none; border-radius: 5px; background: #d4af37; color: white; transition: 0.3s;
+        }
+        .level-select button:hover { background: #b8860b; }
+
+        input { width: 100px; padding: 15px; font-size: 1.5rem; border: 2px solid #ddd; border-radius: 8px; }
+        
+        .action-btn {
+            padding: 15px 30px; font-size: 1.3rem; background: #1b5e20; color: white;
+            border: none; border-radius: 8px; cursor: pointer; margin-top: 20px;
+        }
+
+        /* Help Text Styling */
+        .instruction-step {
+            background: white; border-left: 5px solid #d4af37;
+            padding: 15px; margin: 10px 0; font-size: 1.2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        #hint-display, #answer-display {
+            margin-top: 20px; display: none;
+        }
+
+        .reveal-btn { background: #555; color: white; border: none; padding: 10px; margin-top: 10px; cursor: pointer; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-    <h1>Simultaneous Equation Solver</h1>
-    
-    <div class="level-btns">
-        <button onclick="generateProblem(1)">Level 1</button>
-        <button onclick="generateProblem(2)">Level 2</button>
-        <button onclick="generateProblem(3)">Level 3</button>
-    </div>
+    <div class="container">
+        <div class="problem-section">
+            <div class="level-select">
+                <button onclick="generateProblem(1)">Level 1 (Basic)</button>
+                <button onclick="generateProblem(2)">Level 2 (Intermediate)</button>
+                <button onclick="generateProblem(3)">Level 3 (Complex)</button>
+            </div>
 
-    <div class="card">
-        <div id="equation1" class="equation">Click a level to start</div>
-        <div id="equation2" class="equation"></div>
+            <h1>Solve:</h1>
+            <div id="eq1" class="equation-box">---</div>
+            <div id="eq2" class="equation-box">---</div>
 
-        <div class="input-group">
-            x = <input type="number" id="ansX" step="any">
-            y = <input type="number" id="ansY" step="any">
-            <br><br>
-            <button onclick="checkAnswer()">Check Answer</button>
+            <div style="margin-top: 30px;">
+                x = <input type="number" id="ansX" step="any">
+                y = <input type="number" id="ansY" step="any">
+            </div>
+            <button class="action-btn" onclick="checkAnswer()">Check Solution</button>
+            <div id="feedback" style="font-size: 1.5rem; margin-top: 20px;"></div>
         </div>
-        <div id="feedback"></div>
+
+        <div class="help-section">
+            <h2 style="color: #d4af37;">How to Solve</h2>
+            <div class="instruction-step">1. <b>Align:</b> Ensure $x$ and $y$ are on the same side.</div>
+            <div class="instruction-step">2. <b>Match:</b> Make the coefficients of $y$ (or $x$) the same.</div>
+            <div class="instruction-step">3. <b>Eliminate:</b> Add or subtract the equations.</div>
+            <div class="instruction-step">4. <b>Substitute:</b> Find the other variable.</div>
+
+            <button class="reveal-btn" onclick="toggleHint()">Show/Hide Hint</button>
+            <div id="hint-display" class="instruction-step" style="border-color: #1b5e20;"></div>
+
+            <button class="reveal-btn" onclick="toggleAnswer()">Reveal Answer</button>
+            <div id="answer-display" class="instruction-step" style="background: #fff3cd;"></div>
+        </div>
     </div>
 
 <script>
-    let currentX, currentY;
+    let currentX, currentY, a, b, d, e, c, f;
 
     function generateProblem(level) {
-        // Clear previous
+        // Reset UI
         document.getElementById('feedback').innerText = "";
+        document.getElementById('hint-display').style.display = "none";
+        document.getElementById('answer-display').style.display = "none";
         document.getElementById('ansX').value = "";
         document.getElementById('ansY').value = "";
 
-        // Generate hidden answers (integers for Foundation)
-        currentX = Math.floor(Math.random() * 10) + 1;
-        currentY = Math.floor(Math.random() * 10) + 1;
-
-        let a, b, d, e;
+        // Logic: Pick answers first (Pearson Edexcel Foundation usually uses integers)
+        currentX = Math.floor(Math.random() * 9) + 1;
+        currentY = Math.floor(Math.random() * 9) + 1;
 
         if (level === 1) {
-            // Level 1: Same coefficients for y
-            a = Math.floor(Math.random() * 5) + 1;
-            d = Math.floor(Math.random() * 5) + 1;
-            b = Math.floor(Math.random() * 5) + 1;
-            e = b; // Coefficient of y is the same
-        } else if (level === 2) {
-            // Level 2: One is a multiple of the other
-            b = Math.floor(Math.random() * 3) + 1;
-            e = b * 2; 
-            a = Math.floor(Math.random() * 5) + 1;
-            d = Math.floor(Math.random() * 5) + 1;
-        } else {
-            // Level 3: Different coefficients
-            a = Math.floor(Math.random() * 4) + 2;
+            a = Math.floor(Math.random() * 4) + 1;
+            d = Math.floor(Math.random() * 4) + 1;
             b = Math.floor(Math.random() * 3) + 2;
-            d = Math.floor(Math.random() * 4) + 2;
-            e = Math.floor(Math.random() * 3) + 4;
+            e = b; // Level 1: Same y coefficients
+        } else if (level === 2) {
+            b = Math.floor(Math.random() * 2) + 2;
+            e = b * 2; // Level 2: One is a multiple
+            a = Math.floor(Math.random() * 4) + 1;
+            d = Math.floor(Math.random() * 4) + 1;
+        } else {
+            a = Math.floor(Math.random() * 3) + 2;
+            b = Math.floor(Math.random() * 2) + 2;
+            d = Math.floor(Math.random() * 2) + 4;
+            e = Math.floor(Math.random() * 2) + 5;
         }
 
-        // Calculate constants c and f
-        // ax + by = c
-        // dx + ey = f
-        let c = (a * currentX) + (b * currentY);
-        let f = (d * currentX) + (e * currentY);
+        c = (a * currentX) + (b * currentY);
+        f = (d * currentX) + (e * currentY);
 
-        document.getElementById('equation1').innerText = `${a}x + ${b}y = ${c}`;
-        document.getElementById('equation2').innerText = `${d}x + ${e}y = ${f}`;
+        document.getElementById('eq1').innerText = `${a}x + ${b}y = ${c}`;
+        document.getElementById('eq2').innerText = `${d}x + ${e}y = ${f}`;
+
+        // Prepare Hint Text
+        let hintText = "";
+        if(level === 1) hintText = `Look at the $y$ terms. Both are ${b}y. Subtract the equations to eliminate $y$!`;
+        else if(level === 2) hintText = `Multiply the top equation by 2 so you have ${e}y in both.`;
+        else hintText = `Multiply Equation 1 by ${e} and Equation 2 by ${b} to match the $y$ terms.`;
+        
+        document.getElementById('hint-display').innerHTML = "<b>Hint:</b> " + hintText;
+        document.getElementById('answer-display').innerHTML = `<b>Solution:</b> x = ${currentX}, y = ${currentY}`;
     }
 
     function checkAnswer() {
-        const userX = parseFloat(document.getElementById('ansX').value);
-        const userY = parseFloat(document.getElementById('ansY').value);
-        const feedback = document.getElementById('feedback');
+        const uX = parseFloat(document.getElementById('ansX').value);
+        const uY = parseFloat(document.getElementById('ansY').value);
+        const fb = document.getElementById('feedback');
 
-        if (userX === currentX && userY === currentY) {
-            feedback.innerText = "Correct! Well done.";
-            feedback.style.color = "green";
+        if (uX === currentX && uY === currentY) {
+            fb.innerText = "✅ CORRECT!";
+            fb.style.color = "green";
         } else {
-            feedback.innerText = "Try again!";
-            feedback.style.color = "red";
+            fb.innerText = "❌ Try again, check your signs!";
+            fb.style.color = "red";
         }
     }
+
+    function toggleHint() {
+        const h = document.getElementById('hint-display');
+        h.style.display = h.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleAnswer() {
+        const a = document.getElementById('answer-display');
+        a.style.display = a.style.display === "block" ? "none" : "block";
+    }
+
+    // Initialize with a problem
+    generateProblem(1);
 </script>
 </body>
 </html>
